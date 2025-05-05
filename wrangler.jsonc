@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mcp-countries",
-  "main": "src/index.ts",
+  "main": "src/app/index.ts",
   "compatibility_date": "2025-05-05"
   // "compatibility_flags": [
   //   "nodejs_compat"
