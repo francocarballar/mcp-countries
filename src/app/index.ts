@@ -11,6 +11,9 @@ import { prettyJSON } from 'hono/pretty-json'
 // Utils
 import { getTranslatedMessage } from '@/shared/lib/i18n/getTranslatedMessage'
 
+// Features
+import { countries } from '@/features/mcp-http/routes'
+
 const app = new Hono()
 
 // Middlewares
@@ -82,5 +85,7 @@ app.get('/', c => {
 
   return c.text(message)
 })
+
+app.route('/api', countries())
 
 export default app
