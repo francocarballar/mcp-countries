@@ -1,101 +1,127 @@
 // Types and interfaces
-import type { Context } from 'hono'
 import type { McpTransportManagerOptions, ProvisionResult } from '@/shared/types/lib/utils/mcpTransport'
 
 // Modules and main functions
+import { Context } from 'hono'
+import { randomUUID } from 'crypto'
+
+// MCP
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
-import { randomUUID } from 'node:crypto'
 
 // Utils
-import { createMcpErrorResponse } from './errors'
+import { isInitializeRequest } from '@/shared/lib/utils/parseMcpRequestBody'
+import { createMcpErrorResponse } from '@/shared/lib/utils/errors'
+
+
+
 
 /**
  * @function provisionMcpTransport
- * @description Manages MCP transport provisioning for new and existing sessions.
- * @param c Hono Context
- * @param sessionId Current MCP session ID from headers (if any)
+ * @description Provisions or retrieves a transport for an MCP session.
+ * 
+ * This function handles:
+ * 1. Retrieving existing transports for established sessions
+ * 2. Creating new transports for initialize requests
+ * 3. Validating session IDs and request bodies
+ * 4. Generating and storing new session IDs
+ * 
+ * @param c Hono context
+ * @param sessionId Session ID from headers, if any
  * @param body Parsed request body
- * @param options Configuration for the transport manager
- * @returns An object containing the transport or an error response.
+ * @param options Configuration options
+ * @returns Result object with transport and/or response
  */
-export async function provisionMcpTransport (
+export async function provisionMcpTransport(
   c: Context,
   sessionId: string | undefined,
   body: Record<string, any>,
   options: McpTransportManagerOptions
 ): Promise<ProvisionResult> {
-  const { transportsStore, mcpServerInstance, logger } = options
-  const rpcRequestId = (body as any)?.id ?? null // Extract id for error reporting
-
+  const { transportsStore, mcpServerInstance, logger } = options;
+  
+  // Case 1: Session ID provided and exists in store
   if (sessionId && transportsStore[sessionId]) {
-    logger.log(`Reusing existing transport for session ID: ${sessionId}`)
-    return { transport: transportsStore[sessionId], isNewSession: false }
+    logger.log(`Reusing existing transport for session ID: ${sessionId}`);
+    return {
+      transport: transportsStore[sessionId],
+      isNewSession: false
+    };
   }
-
+  
+  // Case 2: Session ID provided but not found in store
+  if (sessionId) {
+    logger.error(`Session ID provided but not found in transports store: ${sessionId}`);
+    return {
+      isNewSession: false,
+      response: createMcpErrorResponse(
+        c,
+        { code: -32000, message: 'Invalid session ID' },
+        (body as any)?.id ?? null,
+        404
+      )
+    };
+  }
+  
+  // Case 3: No session ID, but this is an initialize request
   if (!sessionId && isInitializeRequest(body)) {
-    logger.log(
-      'No session ID provided, and body is an InitializeRequest. Creating new transport.'
-    )
-
-    const newSessionIdGenerator = (): string => {
-      const newId = randomUUID()
-      logger.log(`Generated new MCP session ID: ${newId}`)
-      return newId
-    }
-
-    const newTransport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: newSessionIdGenerator,
-      onsessioninitialized: generatedSessionId => {
-        transportsStore[generatedSessionId] = newTransport
-        logger.log(
-          `MCP Session Initialized by transport. Stored for session ID: ${generatedSessionId}`
-        )
-      }
-    })
-
+    logger.log('No session ID provided, and body is an InitializeRequest. Creating new transport.');
+    
     try {
-      logger.log(
-        'Attempting to connect McpServer instance to the new transport.'
-      )
-      await mcpServerInstance.connect(newTransport)
-      logger.log('McpServer instance connected to new transport successfully.')
-      return { transport: newTransport, isNewSession: true }
-    } catch (connectError: any) {
-      logger.error(
-        'Failed to connect McpServer to new transport.',
-        connectError
-      )
+      // Create a new transport with session management
+      const newSessionId = randomUUID();
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => {
+          logger.log(`Generated new session ID: ${newSessionId}`);
+          return newSessionId;
+        }
+      });
+      
+      // Connect the MCP server to this transport
+      logger.log('Attempting to connect MCP server to the new transport.');
+      await mcpServerInstance.connect(transport);
+      logger.log('MCP server connected to new transport successfully.');
+      
+      // Store the transport with the new session ID
+      transportsStore[newSessionId] = transport;
+      logger.log(`MCP Session Initialized. Transport stored for session ID: ${newSessionId}`);
+      
+      // Attach the session ID to the transport for internal reference
+      (transport as any)._sessionId = newSessionId;
+      
       return {
+        transport,
+        isNewSession: true
+      };
+    } catch (error: any) {
+      logger.error('Failed to create or connect transport', error);
+      return {
+        isNewSession: true,
         response: createMcpErrorResponse(
           c,
-          {
-            code: -32003,
-            message: 'Server error: Could not connect transport.'
+          { 
+            code: -32003, 
+            message: 'Error creating transport for new session',
+            data: { error: error.message }
           },
-          rpcRequestId,
+          (body as any)?.id ?? null,
           500
-        ),
-        isNewSession: true
-      }
+        )
+      };
     }
   }
-
-  logger.error(
-    'Invalid request: No session ID or not a valid initialize request.',
-    { body: JSON.stringify(body, null, 2) }
-  )
+  
+  // Case 4: No session ID and not an initialize request
+  logger.error('No session ID provided and not an initialize request. Request is invalid.');
   return {
+    isNewSession: false,
     response: createMcpErrorResponse(
       c,
-      {
-        code: -32000,
-        message:
-          'Bad Request: No valid session ID or invalid initialization request.'
+      { 
+        code: -32600, 
+        message: 'Invalid Request: Missing session ID and not an initialize request' 
       },
-      rpcRequestId,
+      (body as any)?.id ?? null,
       400
-    ),
-    isNewSession: false
-  }
-}
+    )
+  };
+} 
