@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import type { McpErrorDetails } from '../../../shared/types/lib/utils/errors.d.ts';
+import type { McpErrorDetails } from '../../../shared/types/lib/utils/errors';
 
 /**
  * @enum McpErrorCode
