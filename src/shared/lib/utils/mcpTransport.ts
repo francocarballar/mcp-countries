@@ -1,5 +1,5 @@
 // Types and interfaces
-import type { McpTransportManagerOptions, ProvisionResult } from 'src/shared/types/lib/utils/mcpTransport'
+import type { McpTransportManagerOptions, ProvisionResult } from '../../../shared/types/lib/utils/mcpTransport'
 
 // Modules and main functions
 import { Context } from 'hono'
@@ -9,8 +9,8 @@ import { randomUUID } from 'crypto'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 
 // Utils
-import { isInitializeRequest } from 'src/shared/lib/utils/parseMcpRequestBody'
-import { createMcpErrorResponse } from 'src/shared/lib/utils/errors'
+import { isInitializeRequest } from '../../../shared/lib/utils/parseMcpRequestBody'
+import { createMcpErrorResponse } from '../../../shared/lib/utils/errors'
 
 
 

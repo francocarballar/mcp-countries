@@ -3,17 +3,17 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js'
 
 // Constants
-import { API_ENDPOINTS, API_URL_WITH_VERSION } from 'src/shared/config/constants/api'
+import { API_ENDPOINTS, API_URL_WITH_VERSION } from '../../../shared/config/constants/api'
 
 // Utils
-import { createMcpLogger } from 'src/shared/lib/utils/logger'
+import { createMcpLogger } from '../../../shared/lib/utils/logger'
 
 // Validations
 import {
   FieldsParamSchema,
   FlattenParamSchema,
   SortParamSchema
-} from './validations'
+} from '../../../shared/lib/tools/validations'
 
 
 // const openApiSpecComment = `

@@ -3,14 +3,14 @@ import { Hono } from 'hono'
 
 // MCP logic
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import { handleMcpRequest, SERVER } from 'src/shared/lib/utils/mcp'
+import { handleMcpRequest, SERVER } from '../../shared/lib/utils/mcp'
 
 // Utils
-import { createMcpLogger } from 'src/shared/lib/utils/logger'
-import { parseMcpRequestBody } from 'src/shared/lib/utils/parseMcpRequestBody'
+import { createMcpLogger } from '../../shared/lib/utils/logger'
+import { parseMcpRequestBody } from '../../shared/lib/utils/parseMcpRequestBody'
 
 // Tools
-import { getAllCountries } from 'src/shared/lib/tools/getAllCountries'
+import { getAllCountries } from '../../shared/lib/tools/getAllCountries'
 
 
 /**

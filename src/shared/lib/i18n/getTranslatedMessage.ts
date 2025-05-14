@@ -1,5 +1,5 @@
-import type { MessageKey, LanguageCode } from 'src/shared/types/message'
-import { messages, defaultLanguage } from 'src/shared/config/i18n/messages'
+import type { MessageKey, LanguageCode } from '../../../shared/types/message'
+import { messages, defaultLanguage } from '../../../shared/config/i18n/messages'
 
 /**
  * @function getPreferredLanguage

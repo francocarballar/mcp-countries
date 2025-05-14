@@ -1,4 +1,4 @@
-import type { Messages, LanguageCode } from 'src/shared/types/message'
+import type { Messages, LanguageCode } from '../../../shared/types/message'
 
 /**
  * @constant messages

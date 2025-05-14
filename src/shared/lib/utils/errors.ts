@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import  { McpErrorCode, type McpErrorDetails } from 'src/shared/types/lib/utils/errors';
+import  { McpErrorCode, type McpErrorDetails } from '../../../shared/types/lib/utils/errors';
 
 
 /**
