@@ -1,9 +1,9 @@
 // Services
-import { getAllCountries } from '@/shared/lib/tools/getAllCountries'
+import { getAllCountries } from 'src/shared/lib/tools/getAllCountries'
 
 // Utils
-import { SERVER, TRANSPORT } from '@/shared/lib/utils/mcp'
-import { createMcpLogger } from '@/shared/lib/utils/logger'
+import { SERVER, TRANSPORT } from 'src/shared/lib/utils/mcp'
+import { createMcpLogger } from 'src/shared/lib/utils/logger'
 
 async function main () {
   getAllCountries(SERVER)

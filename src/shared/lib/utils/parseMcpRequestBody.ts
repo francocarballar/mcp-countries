@@ -1,6 +1,6 @@
 import { Context } from 'hono'
-import { McpLogger } from '@/shared/types/lib/utils/logger'
-import { createMcpErrorResponse } from '@/shared/lib/utils/errors'
+import { McpLogger } from 'src/shared/types/lib/utils/logger'
+import { createMcpErrorResponse } from 'src/shared/lib/utils/errors'
 
 /**
  * @function parseMcpRequestBody

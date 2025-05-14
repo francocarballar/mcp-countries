@@ -7,11 +7,11 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { toFetchResponse, toReqRes } from 'fetch-to-node'
 
 // Config
-import { MCP_CONFIG, MCP_SERVER_OPTIONS } from '@/shared/config/mcp/config'
+import { MCP_CONFIG, MCP_SERVER_OPTIONS } from 'src/shared/config/mcp/config'
 
 // Utils
-import { provisionMcpTransport } from '@/shared/lib/utils/mcpTransport'
-import { createMcpErrorResponse } from '@/shared/lib/utils/errors'
+import { provisionMcpTransport } from 'src/shared/lib/utils/mcpTransport'
+import { createMcpErrorResponse } from 'src/shared/lib/utils/errors'
 import { createMcpLogger } from './logger'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 

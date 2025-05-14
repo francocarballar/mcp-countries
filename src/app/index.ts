@@ -1,5 +1,5 @@
 // Types and interfaces
-import type { MessageKey } from '@/shared/types/message'
+import type { MessageKey } from 'src/shared/types/message'
 
 // Modules and main functions
 import { Hono } from 'hono'
@@ -9,10 +9,10 @@ import { cors } from 'hono/cors'
 import { prettyJSON } from 'hono/pretty-json'
 
 // Utils
-import { getTranslatedMessage } from '@/shared/lib/i18n/getTranslatedMessage'
+import { getTranslatedMessage } from 'src/shared/lib/i18n/getTranslatedMessage'
 
 // Features
-import { countries } from '@/features/mcp-http/routes'
+import { countries } from 'src/features/mcp-http/routes'
 
 const app = new Hono()
 

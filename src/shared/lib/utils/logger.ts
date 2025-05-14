@@ -1,4 +1,4 @@
-import { McpLogger } from '@/shared/types/lib/utils/logger';
+import { McpLogger } from 'src/shared/types/lib/utils/logger';
 
 /**
  * @function createMcpLogger
